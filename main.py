@@ -67,13 +67,12 @@ async def list_special(ctx: lightbulb.Context) -> None:
 
 
 # Print a message every 10 seconds
-sunday_trigger = tasks.CronTrigger(day_of_week=0)
-ten_sec_trigger = tasks.CronTrigger(second=10)
+sunday_trigger = tasks.CronTrigger(day_of_week=6)
 
 
-@tasks.task(trigger=ten_sec_trigger)
-def update_list_on_mondays() -> None:
-    print("le caca")
+@tasks.task(sunday_trigger, auto_start=True)
+def update_list_on_sundays() -> None:
+    print("do something each sunday")
 
 
 bot.run()
