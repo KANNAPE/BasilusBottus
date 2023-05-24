@@ -13,6 +13,13 @@ rollus_id = 1109510213570150503
 listus = []
 
 
+@bot.listen()
+async def on_started(event: hikari.StartedEvent) -> None:
+    bot_guild = await event.app.rest.fetch_my_guilds()
+    guild_names = [guild.name for guild in bot_guild]
+    print(guild_names)
+
+
 # Says something when pinged
 @bot.listen()
 async def ping(event: hikari.GuildMessageCreateEvent) -> None:
@@ -26,13 +33,13 @@ async def ping(event: hikari.GuildMessageCreateEvent) -> None:
         await event.message.respond("Pong!")
 
 
-# Removes a user from the list
+# Removes a user from the list https://hikari-lightbulb.readthedocs.io/en/latest/guides/error-handling.html
 @bot.command
-@lightbulb.option('user', 'User to remove from the list', required=True)
+@lightbulb.option('user', 'User to remove from the list', hikari.User, required=True)
 @lightbulb.command('remove', 'Removes the tagged user from the Basilus Listus.')
 @lightbulb.implements(lightbulb.SlashCommand)
 async def remove_from_list(ctx: lightbulb.Context) -> None:
-    print(ctx.options.user)
+    print(type(ctx.options.user))
     await ctx.respond('Done')
 
 
@@ -67,7 +74,8 @@ async def list_special(ctx: lightbulb.Context) -> None:
 
 
 # Print a message every 10 seconds
-sunday_trigger = tasks.CronTrigger(day_of_week=6)
+# https://www.linuxtricks.fr/wiki/cron-et-crontab-le-planificateur-de-taches#copy-code-9
+sunday_trigger = tasks.CronTrigger("00 00 * * sun *")
 
 
 @tasks.task(sunday_trigger, auto_start=True)
